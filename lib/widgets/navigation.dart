@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
 class NavigationWidget extends StatefulWidget {
-  final Function(BuildContext) onSearchTap;
-  final Function(BuildContext) onCartTap;
-  final Function(BuildContext) onProfileTap;
   final Color backgroundColor;
+  final int selectedIndex; // Accept selected index from parent
+  final Function(int) onIndexChanged; // Callback function to notify parent
 
   const NavigationWidget({
-    required this.onSearchTap,
-    required this.onCartTap,
-    required this.onProfileTap,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = Colors.indigo,
+    required this.selectedIndex, // Accept the selected index
+    required this.onIndexChanged, // Make sure to pass the callback
     super.key,
   });
 
@@ -19,12 +17,19 @@ class NavigationWidget extends StatefulWidget {
 }
 
 class _NavigationWidgetState extends State<NavigationWidget> {
-  int _selectedIndex = 0; // Track the selected index (0 = Search, 1 = Cart, 2 = Profile)
+  int _selectedIndex = 0; // Track the selected index
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex =
+        widget.selectedIndex; // Initialize the selected index from parent
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.indigo,
+      color: widget.backgroundColor,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -37,9 +42,12 @@ class _NavigationWidgetState extends State<NavigationWidget> {
             label: 'Search',
             onTap: () {
               setState(() {
-                _selectedIndex = 0;
+                _selectedIndex = 0; // Update selected index
               });
-              widget.onSearchTap(context); // Pass context for navigation
+              widget.onIndexChanged(
+                  _selectedIndex); // Call the callback to notify parent
+              Navigator.pushNamed(
+                  context, '/items'); // Navigate to Search screen
             },
             isSelected: _selectedIndex == 0,
           ),
@@ -50,9 +58,10 @@ class _NavigationWidgetState extends State<NavigationWidget> {
             label: 'Cart',
             onTap: () {
               setState(() {
-                _selectedIndex = 1;
+                _selectedIndex = 1; // Update selected index
               });
-              widget.onCartTap(context); // Pass context for navigation
+              widget.onIndexChanged(_selectedIndex); // Notify parent
+              Navigator.pushNamed(context, '/cart'); // Navigate to Cart screen
             },
             isSelected: _selectedIndex == 1,
           ),
@@ -63,9 +72,11 @@ class _NavigationWidgetState extends State<NavigationWidget> {
             label: 'Profile',
             onTap: () {
               setState(() {
-                _selectedIndex = 2;
+                _selectedIndex = 2; // Update selected index
               });
-              widget.onProfileTap(context); // Pass context for navigation
+              widget.onIndexChanged(_selectedIndex); // Notify parent
+              Navigator.pushNamed(
+                  context, '/profile'); // Navigate to Profile screen
             },
             isSelected: _selectedIndex == 2,
           ),
@@ -98,7 +109,9 @@ class _NavigationWidgetState extends State<NavigationWidget> {
         ),
         Text(
           label,
-          style: TextStyle(fontSize: 14, color: isSelected ? Colors.deepOrangeAccent : Colors.white),
+          style: TextStyle(
+              fontSize: 14,
+              color: isSelected ? Colors.deepOrangeAccent : Colors.white),
         ),
       ],
     );

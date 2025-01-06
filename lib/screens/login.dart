@@ -21,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late String email, password;
   String? emailError, passwordError;
+  int _selectedIndex = 2; // Set the default selected index to 2
 
   Function(String? email, String? password)? get onSubmitted =>
       widget.onSubmitted;
@@ -28,14 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
   void navigateToSearch(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ItemScreen()),
+      MaterialPageRoute(builder: (context) => const ItemsScreen()),
     );
   }
 
   void navigateToCart(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CartScreen()),
+      MaterialPageRoute(builder: (context) => CartScreen()),
     );
   }
 
@@ -45,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
       MaterialPageRoute(builder: (context) => const ProfileScreen()),
     );
   }
-
 
   @override
   void initState() {
@@ -94,6 +94,13 @@ class _LoginScreenState extends State<LoginScreen> {
         onSubmitted!(email, password);
       }
     }
+  }
+
+  // Callback to update the selected index
+  void _onIndexChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -178,17 +185,14 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: screenHeight * .050,
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
+            // Pass the selectedIndex and the callback to update it
+            Align(
+              alignment: Alignment.bottomCenter,
               child: Container(
-                width: double.infinity,
+                width: double.infinity,  // Ensures full width
                 child: NavigationWidget(
-                  backgroundColor: Colors.white,
-                  onSearchTap: (context) => navigateToSearch(context),
-                  onCartTap: (context) => navigateToCart(context),
-                  onProfileTap: (context) => navigateToProfile(context),
+                  onIndexChanged: _onIndexChanged,
+                  selectedIndex: _selectedIndex,
                 ),
               ),
             ),
