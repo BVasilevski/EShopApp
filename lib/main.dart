@@ -2,6 +2,7 @@ import 'package:e_shop_app/screens/cart.dart';
 import 'package:e_shop_app/screens/edit_profile.dart';
 import 'package:e_shop_app/screens/items.dart';
 import 'package:e_shop_app/screens/login.dart';
+import 'package:e_shop_app/screens/orders.dart';
 import 'package:e_shop_app/screens/profile.dart';
 import 'package:flutter/material.dart';
 
@@ -24,8 +25,9 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/edit-profile': (context) => const EditProfileScreen(),
-        '/cart': (context) => CartScreen(),
+        '/cart': (context) => const CartScreen(),
         '/items': (context) => const ItemsScreen(),
+        '/orders': (context) => const OrdersScreen()
       },
     );
   }

@@ -9,8 +9,8 @@ class ChangeDataScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Change Data'),
       ),
-      body: Center(
-        child: const Text('Change data functionality goes here'),
+      body: const Center(
+        child: Text('Change data functionality goes here'),
       ),
     );
   }

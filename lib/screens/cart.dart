@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/navigation.dart';
+import '../widgets/payment.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -9,6 +10,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  // Placeholder data
   final List<Map<String, dynamic>> cartItems = [
     {'name': 'Item 1', 'price': 10.99},
     {'name': 'Item 2', 'price': 15.49},
@@ -16,26 +18,30 @@ class _CartScreenState extends State<CartScreen> {
     {'name': 'Item 4', 'price': 12.00},
   ];
 
-  int _selectedIndex = 1; // Set Cart as the initially selected index
+  int _selectedIndex = 1;
+  bool _isPaymentWidgetVisible = false;
 
-  // Callback function to handle index change
   void _onIndexChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  void _onCheckoutPressed() {
+    setState(() {
+      _isPaymentWidgetVisible = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double totalPrice = cartItems.fold(0, (sum, item) => sum + item['price']);
-
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: Stack(
         children: [
           Column(
             children: [
-              // Total Price and Checkout Button
               Container(
                 padding: const EdgeInsets.all(16.0),
                 color: Colors.indigo,
@@ -51,9 +57,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        // Add checkout functionality here
-                      },
+                      onPressed: _onCheckoutPressed,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange, // Button color
                         padding: const EdgeInsets.symmetric(
@@ -70,7 +74,6 @@ class _CartScreenState extends State<CartScreen> {
               ),
               const SizedBox(height: 16), // Spacer
 
-              // Cart Items List
               Expanded(
                 child: ListView.builder(
                   itemCount: cartItems.length,
@@ -87,7 +90,6 @@ class _CartScreenState extends State<CartScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Item Name and Price
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -108,10 +110,9 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ],
                           ),
-                          // Delete Icon Button
                           IconButton(
                             onPressed: () {
-                              // Add delete functionality here
+                              // The delete from cart functionality will be here
                             },
                             icon: const Icon(
                               Icons.delete,
@@ -127,7 +128,6 @@ class _CartScreenState extends State<CartScreen> {
             ],
           ),
 
-          // Navigation Bar
           Align(
             alignment: Alignment.bottomCenter,
             child: NavigationWidget(
@@ -135,6 +135,30 @@ class _CartScreenState extends State<CartScreen> {
               selectedIndex: _selectedIndex,
             ),
           ),
+
+          if (_isPaymentWidgetVisible)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 100.0,
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10.0,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: PaymentWidget(
+                  totalAmount: totalPrice,
+                ),
+              ),
+            ),
         ],
       ),
     );

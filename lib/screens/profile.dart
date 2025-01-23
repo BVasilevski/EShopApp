@@ -1,6 +1,6 @@
 import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
-import 'change_data.dart'; // Import the ChangeDataScreen if needed
+import 'change_data.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,9 +10,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final String firstAndLastName = "John Doe"; // Example user data
-  final String email = "johndoe@example.com";
-  int _selectedIndex = 2; // Set the default selected index to 2
+  final String firstAndLastName = "Test Testovski";
+  final String email = "test@gmail.com";
+  int _selectedIndex = 2;
 
   void _onIndexChanged(int index) {
     setState(() {
@@ -24,75 +24,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueAccent,
-      // Set the background color of the whole page
       body: Center(
         child: SingleChildScrollView(
           child: Container(
             width: double.infinity,
-            // Make the container full width
             padding: const EdgeInsets.all(24.0),
-            // Bigger padding
             color: Colors.blueAccent,
-            // Set container color same as the background
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              // Ensure the column is as small as possible
               crossAxisAlignment: CrossAxisAlignment.center,
-              // Center the children
               children: [
-                // User Icon at the top
                 const CircleAvatar(
-                  radius: 50, // Size of the avatar
-                  backgroundColor: Colors.white, // Avatar background color
+                  radius: 50,
+                  backgroundColor: Colors.white,
                   child: Icon(
-                    Icons.account_circle, // Icon for the user
-                    size: 80, // Icon size
-                    color: Colors.blueAccent, // Icon color
+                    Icons.account_circle,
+                    size: 80,
+                    color: Colors.blueAccent,
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Spacer between icon and the text content
-
-                // First and Last Name Label and Value
                 const Text(
                   'First and Last Name:',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 24, // Bigger text size
+                    fontSize: 24,
                     color: Colors
-                        .black, // Text color for visibility on the blue background
+                        .black,
                   ),
                 ),
                 Text(
                   firstAndLastName,
                   style: const TextStyle(
-                      fontSize: 22, color: Colors.white), // Bigger text size
+                      fontSize: 22, color: Colors.white),
                 ),
                 const SizedBox(height: 24),
-                // Bigger spacing
-
-                // Email Label and Value
                 const Text(
                   'Email:',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 24, // Bigger text size
+                    fontSize: 24,
                     color: Colors
-                        .black, // Text color for visibility on the blue background
+                        .black,
                   ),
                 ),
                 Text(
                   email,
                   style: const TextStyle(
-                      fontSize: 22, color: Colors.white), // Bigger text size
+                      fontSize: 22, color: Colors.white),
                 ),
                 const SizedBox(height: 48),
-                // Bigger spacing between fields and buttons
-
-                // Change Data Button with Orange Color and Larger Size
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to Change Data Screen
+                    Navigator.pushNamed(context, '/orders');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 40),
+                    textStyle: const TextStyle(
+                        fontSize: 20),
+                  ),
+                  child: const Text('My Orders'),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -102,32 +99,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
-                    // Set the button color to orange
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 40),
-                    // Bigger button padding
                     textStyle: const TextStyle(
-                        fontSize: 20), // Bigger text size in the button
+                        fontSize: 20),
                   ),
                   child: const Text('Change Data'),
                 ),
                 const SizedBox(height: 24),
-                // Bigger spacing
-
-                // Log Out Button with Orange Color and Larger Size
                 ElevatedButton(
                   onPressed: () {
                     // Log out logic goes here
-                    // Right now, it does nothing
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
-                    // Set the button color to orange
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 40),
-                    // Bigger button padding
                     textStyle: const TextStyle(
-                        fontSize: 20), // Bigger text size in the button
+                        fontSize: 20),
                   ),
                   child: const Text('Log Out'),
                 ),
@@ -137,7 +126,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      // Navigation bar at the bottom outside the padding
       bottomNavigationBar: NavigationWidget(
         onIndexChanged: _onIndexChanged,
         selectedIndex: _selectedIndex,

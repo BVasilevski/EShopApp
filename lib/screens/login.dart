@@ -1,12 +1,9 @@
-import 'package:e_shop_app/screens/items.dart';
-import 'package:e_shop_app/screens/profile.dart';
 import 'package:e_shop_app/screens/register.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/form_button.dart';
 import '../widgets/input_field.dart';
 import '../widgets/navigation.dart';
-import 'cart.dart';
 
 class LoginScreen extends StatefulWidget {
   /// Callback for when this form is submitted successfully. Parameters are (email, password)
@@ -21,31 +18,11 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late String email, password;
   String? emailError, passwordError;
-  int _selectedIndex = 2; // Set the default selected index to 2
+  int _selectedIndex = 2;
 
   Function(String? email, String? password)? get onSubmitted =>
       widget.onSubmitted;
 
-  void navigateToSearch(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ItemsScreen()),
-    );
-  }
-
-  void navigateToCart(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CartScreen()),
-    );
-  }
-
-  void navigateToProfile(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ProfileScreen()),
-    );
-  }
 
   @override
   void initState() {
@@ -96,7 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Callback to update the selected index
   void _onIndexChanged(int index) {
     setState(() {
       _selectedIndex = index;
@@ -185,11 +161,10 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: screenHeight * .050,
             ),
-            // Pass the selectedIndex and the callback to update it
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                width: double.infinity,  // Ensures full width
+                width: double.infinity,
                 child: NavigationWidget(
                   onIndexChanged: _onIndexChanged,
                   selectedIndex: _selectedIndex,

@@ -11,9 +11,7 @@ class ItemDetailsScreen extends StatefulWidget {
 }
 
 class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
-  int _selectedIndex = 0; // Set the default selected index to 0
-
-  // Callback to update the selected index
+  int _selectedIndex = 0;
   void _onIndexChanged(int index) {
     setState(() {
       _selectedIndex = index;
@@ -24,59 +22,81 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueAccent,
-      body: Center(
-        child: Column(
-          children: [
-            // Product image
-            Image.network(
-              widget.product['image'],
-              height: 250,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(height: 16),
-
-            // Product name
-            Text(
-              widget.product['name'],
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Product price
-            Text(
-              widget.product['price'],
-              style: const TextStyle(
-                fontSize: 20,
-                color: Colors.green,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Product description (example)
-            Text(
-              'Description: ${widget.product['specifications'] ?? 'No specifications available'}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            const Spacer(),
-
-            // Ensure the navigation widget spans from side to side
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: double.infinity,  // This ensures full width
-                child: NavigationWidget(
-                  onIndexChanged: _onIndexChanged,
-                  selectedIndex: _selectedIndex,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                    child: Image.network(
+                      widget.product['image'],
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 16),
+                Text(
+                  widget.product['name'],
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.product['price'],
+                  style: const TextStyle(
+                    fontSize: 22,
+                    color: Colors.green,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'Description: ${widget.product['specifications'] ?? 'No specifications available'}',
+                    style: const TextStyle(fontSize: 16, color: Colors.white70),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                ElevatedButton(
+                  onPressed: () {
+                    // Add to cart functionality
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 50),
+                    backgroundColor: Colors.orange, // Button color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  child: const Text('Add to Cart'),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
-          ],
+          ),
         ),
+      ),
+      bottomNavigationBar: NavigationWidget(
+        onIndexChanged: _onIndexChanged,
+        selectedIndex: _selectedIndex,
       ),
     );
   }

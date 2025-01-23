@@ -19,6 +19,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
   ];
   int _selectedIndex = 0;
 
+  // Placeholder items
   final Map<String, List<Map<String, dynamic>>> products = {
     'CPU': [
       {
@@ -107,8 +108,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 16),
-
-          // Search bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
@@ -135,8 +134,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
           ),
 
           const SizedBox(height: 16),
-
-          // Categories list
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Center(
@@ -153,8 +150,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       onTap: () {
                         setState(() {
                           selectedCategory = category;
-                          searchQuery =
-                              ''; // Reset search query when category changes
+                          searchQuery = '';
                         });
                       },
                       child: Container(
@@ -184,8 +180,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Products grid
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(12),
@@ -232,8 +226,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
                           ),
                         ),
                         const SizedBox(height: 6),
-
-                        // Product name
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Center(
@@ -251,8 +243,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         ),
 
                         const Spacer(),
-
-                        // Product price and Add to Cart button
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 6),
@@ -289,8 +279,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
               },
             ),
           ),
-
-          // Navigation bar
           Align(
             alignment: Alignment.bottomCenter,
             child: NavigationWidget(
