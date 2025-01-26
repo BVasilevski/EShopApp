@@ -1,7 +1,6 @@
 import 'package:e_shop_app/widgets/input_field.dart';
 import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
-import 'change_data.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -55,7 +54,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const InputField(labelText: "Enter first and last name",),
+                const InputField(
+                  labelText: "Enter first and last name",
+                ),
                 const SizedBox(height: 24),
                 const Text(
                   'Email:',
@@ -65,39 +66,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const InputField(labelText: "Enter email",),
+                const InputField(
+                  labelText: "Enter email",
+                ),
                 const SizedBox(height: 48),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ChangeDataScreen(),
-                      ),
-                    );
-                  },
+                  // Change data logic goes here
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
                   child: const Text('Save changes'),
                 ),
-
                 const SizedBox(height: 300),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: NavigationWidget(
-                    onIndexChanged: _onIndexChanged,
-                    selectedIndex: _selectedIndex,
-                  ),
-                ),
               ],
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: NavigationWidget(
+        onIndexChanged: _onIndexChanged,
+        selectedIndex: _selectedIndex,
       ),
     );
   }

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class NavigationWidget extends StatefulWidget {
   final Color backgroundColor;
-  final int selectedIndex; // Accept selected index from parent
-  final Function(int) onIndexChanged; // Callback function to notify parent
+  final int selectedIndex;
+  final Function(int) onIndexChanged;
 
   const NavigationWidget({
     this.backgroundColor = Colors.indigo,
-    required this.selectedIndex, // Accept the selected index
-    required this.onIndexChanged, // Make sure to pass the callback
+    required this.selectedIndex,
+    required this.onIndexChanged,
     super.key,
   });
 
@@ -17,13 +17,13 @@ class NavigationWidget extends StatefulWidget {
 }
 
 class _NavigationWidgetState extends State<NavigationWidget> {
-  int _selectedIndex = 0; // Track the selected index
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex =
-        widget.selectedIndex; // Initialize the selected index from parent
+        widget.selectedIndex;
   }
 
   @override
@@ -35,48 +35,45 @@ class _NavigationWidgetState extends State<NavigationWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Search icon
           _buildIconButton(
             index: 0,
             icon: Icons.search,
             label: 'Search',
             onTap: () {
               setState(() {
-                _selectedIndex = 0; // Update selected index
+                _selectedIndex = 0;
               });
               widget.onIndexChanged(
-                  _selectedIndex); // Call the callback to notify parent
+                  _selectedIndex);
               Navigator.pushNamed(
-                  context, '/items'); // Navigate to Search screen
+                  context, '/items');
             },
             isSelected: _selectedIndex == 0,
           ),
-          // Cart icon
           _buildIconButton(
             index: 1,
             icon: Icons.shopping_cart,
             label: 'Cart',
             onTap: () {
               setState(() {
-                _selectedIndex = 1; // Update selected index
+                _selectedIndex = 1;
               });
-              widget.onIndexChanged(_selectedIndex); // Notify parent
-              Navigator.pushNamed(context, '/cart'); // Navigate to Cart screen
+              widget.onIndexChanged(_selectedIndex);
+              Navigator.pushNamed(context, '/cart');
             },
             isSelected: _selectedIndex == 1,
           ),
-          // Profile icon
           _buildIconButton(
             index: 2,
             icon: Icons.account_circle,
             label: 'Profile',
             onTap: () {
               setState(() {
-                _selectedIndex = 2; // Update selected index
+                _selectedIndex = 2;
               });
-              widget.onIndexChanged(_selectedIndex); // Notify parent
+              widget.onIndexChanged(_selectedIndex);
               Navigator.pushNamed(
-                  context, '/profile'); // Navigate to Profile screen
+                  context, '/profile');
             },
             isSelected: _selectedIndex == 2,
           ),
@@ -85,7 +82,6 @@ class _NavigationWidgetState extends State<NavigationWidget> {
     );
   }
 
-  // Helper method to build each icon button
   Widget _buildIconButton({
     required int index,
     required IconData icon,

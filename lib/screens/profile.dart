@@ -1,6 +1,6 @@
+import 'package:e_shop_app/screens/edit_profile.dart';
 import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
-import 'change_data.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -93,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ChangeDataScreen(),
+                        builder: (context) => const EditProfileScreen(),
                       ),
                     );
                   },

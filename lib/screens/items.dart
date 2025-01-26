@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/navigation.dart';
 import 'item_details.dart';
+import 'map.dart';
 
 class ItemsScreen extends StatefulWidget {
   const ItemsScreen({super.key});
@@ -60,9 +61,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
     ],
     'PSU': [
       {
-        'name': 'GEMBIRD 700W',
+        'name': 'Segotep 750W',
         'price': '\$50',
-        'image': 'https://www.e-shop.gr/images/PER/BIG/PER.585367.jpg',
+        'image': 'https://m.media-amazon.com/images/I/71sHLnts-HL._AC_SL1500_.jpg',
         'specifications': '700W PSU'
       }
     ],
@@ -70,7 +71,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
       {
         'name': 'Samsung NVME M.2 1TB',
         'price': '\$100',
-        'image': 'https://www.insomnia.mk/files/resized/products/47865_0-1000x1000.1800x1800w.png',
+        'image':
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-WWjl0YmKJzzD2gAIo72hdYtQ1hoZELIAg&s',
         'specifications': '1TB Super fast storage'
       }
     ],
@@ -78,7 +80,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
       {
         'name': 'MSI H110M PRO-D',
         'price': '\$50',
-        'image': 'https://m.media-amazon.com/images/I/71FJ9jPc2xL._AC_UF894,1000_QL80_.jpg',
+        'image':
+            'https://m.media-amazon.com/images/I/71FJ9jPc2xL._AC_UF894,1000_QL80_.jpg',
         'specifications': 'Intel socket DDR4 motherboard'
       }
     ]
@@ -110,29 +113,51 @@ class _ItemsScreenState extends State<ItemsScreen> {
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              onChanged: (query) {
-                setState(() {
-                  searchQuery = query;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Search for products...',
-                hintStyle: const TextStyle(color: Colors.white),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.7),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+            child: Row(
+              children: [
+                // Search Bar
+                Expanded(
+                  child: TextField(
+                    onChanged: (query) {
+                      setState(() {
+                        searchQuery = query;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search for products...',
+                      hintStyle: const TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.7),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                  ),
                 ),
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: Colors.blueAccent,
+                const SizedBox(width: 8),
+                // Map Icon Button
+                IconButton(
+                  icon: const Icon(
+                    Icons.map,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MapScreen(),
+                      ),
+                    );
+                  },
                 ),
-              ),
+              ],
             ),
           ),
-
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -211,7 +236,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Product image
                         Container(
                           height: screenSize.height * 0.2,
                           decoration: BoxDecoration(
@@ -241,7 +265,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
                             ),
                           ),
                         ),
-
                         const Spacer(),
                         Padding(
                           padding: const EdgeInsets.symmetric(
