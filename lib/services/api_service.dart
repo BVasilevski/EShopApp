@@ -36,6 +36,7 @@ class ApiService {
   
     final response = await http.delete(
       Uri.parse("${baseUrl}cart/remove_from_cart"),
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
       body: {'itemId': itemId.toString()},
     );
     print(response.statusCode);
@@ -46,14 +47,14 @@ class ApiService {
     int userid = int.parse(userId);
     final response = await http.post(
       Uri.parse("${baseUrl}cart/add_to_cart"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        'itemId': itemId,
-        'userId': userid,
-        'quantity': 1
-        }),
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: {
+        'itemId': itemId.toString(),
+        'userId': userid.toString(),
+        'quantity': '1'
+        },
     );
-    print(response);
+    print(response.statusCode);
   
  }
 

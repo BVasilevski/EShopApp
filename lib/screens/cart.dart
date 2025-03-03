@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:e_shop_app/models/item.dart';
+import 'package:e_shop_app/models/cartItem.dart';
 import 'package:e_shop_app/services/api_service.dart';
 import 'package:e_shop_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  List<Item> cartItems = [];
+  List<CartItem> cartItems = [];
 
   int _selectedIndex = 1;
   bool _isPaymentWidgetVisible = false;
@@ -32,7 +32,7 @@ class _CartScreenState extends State<CartScreen> {
       var data = json.decode(response.body);
       if (data is List) {
         setState(() {
-          cartItems = data.map<Item>((json) => Item.fromJson(json)).toList();
+          cartItems = data.map<CartItem>((json) => CartItem.fromJson(json)).toList();
         });
       } else {
         print("Unexpected API response format");
@@ -58,134 +58,154 @@ class _CartScreenState extends State<CartScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    double totalPrice = cartItems.fold(0, (sum, item) => sum + item.price);
-    AuthHelper.checkLoginStatus(context);
-    return Scaffold(
-      backgroundColor: Colors.blueAccent,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                color: Colors.indigo,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '  Total:\n \$${totalPrice.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 24,
+  double totalPrice = cartItems.fold(0, (sum, item) => sum + item.price);
+  AuthHelper.checkLoginStatus(context);
+
+  return Scaffold(
+    backgroundColor: Colors.blueAccent,
+    body: Stack(
+      children: [
+        Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.indigo,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '  Total:\n ${totalPrice.toStringAsFixed(0)}ден.',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: _onCheckoutPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange, 
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 20),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: _onCheckoutPressed,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange, // Button color
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 20),
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      child: const Text('Checkout'),
-                    ),
-                  ],
-                ),
+                    child: const Text('Checkout'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16), // Spacer
+            ),
+            const SizedBox(height: 16), 
 
-              Expanded(
-                child: ListView.builder(
-                  itemCount: cartItems.length,
-                  itemBuilder: (context, index) {
-                    final item = cartItems[index];
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blueAccent,
-                                ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = cartItems[index];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                              item.itemName,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueAccent,
                               ),
-                              Text(
-                                '\$${item.price.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.blueAccent,
-                                ),
-                              ),
-                            ],
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              // The delete from cart functionality will be here
-                              ApiService.removeItemFromCart(item.id);
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
+                              overflow: TextOverflow.ellipsis, 
+                              maxLines: 1, 
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: NavigationWidget(
-              onIndexChanged: _onIndexChanged,
-              selectedIndex: _selectedIndex,
-            ),
-          ),
-
-          if (_isPaymentWidgetVisible)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 100.0,
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10.0,
-                      offset: Offset(0, 4),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                ApiService.removeItemFromCart(item.id);
+                                setState(() {
+                                  cartItems.removeAt(index);
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8), 
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${item.price.toStringAsFixed(0)}ден.',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                            Text(
+                              'Quantity: ${item.quantity}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: PaymentWidget(
-                  totalAmount: totalPrice,
-                ),
+                  );
+                },
               ),
             ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: NavigationWidget(
+            onIndexChanged: _onIndexChanged,
+            selectedIndex: _selectedIndex,
+          ),
+        ),
+
+        if (_isPaymentWidgetVisible)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 100.0,
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: PaymentWidget(
+                totalAmount: totalPrice,
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
+}
 }

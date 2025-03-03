@@ -6,7 +6,7 @@ import 'package:e_shop_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/navigation.dart';
-// import 'order_details.dart';
+import 'order_details.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -25,18 +25,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
     });
   }
 
-  // void _viewOrderDetails(Order order) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => OrderDetailsScreen(order: order),
-  //     ),
-  //   );
-  // }
+  void _viewOrderDetails(Order order) {
+    Navigator.push(
+     context,
+     MaterialPageRoute(
+       builder: (context) => OrderDetailsScreen(order: order),
+     ),
+   );
+  }
 
   void getItemsFromAPI(String userId) {
     ApiService.getOrders(userId).then((response) {
       var data = json.decode(response.body);
+      print(data);
       if (data is List) {
         setState(() {
           orders = data.map<Order>((json) => Order.fromJson(json)).toList();
@@ -49,13 +50,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
     });
   }
 
-
-  @override
-  Future<void> initState() async {
-    super.initState();
+  Future<void> getOrders() async {
     final prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('userId');
-    getItemsFromAPI(userId!); 
+    getItemsFromAPI(userId!);
+  }
+  @override
+  void initState()  {
+    super.initState();
+    getOrders(); 
   }
   @override
   Widget build(BuildContext context) {
@@ -82,7 +85,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: GestureDetector(
-                          // onTap: () => _viewOrderDetails(order),
+                          onTap: () => _viewOrderDetails(order),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -95,7 +98,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                 ),
                               ),
                               Text(
-                                'Total: \$${order.price.toStringAsFixed(2)}',
+                                'Total: ${order.totalPrice.toStringAsFixed(0)}ден.',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

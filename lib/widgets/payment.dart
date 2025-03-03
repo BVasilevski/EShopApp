@@ -76,7 +76,7 @@ class PaymentWidget extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             // The payment logic will be here
-            // use stripe or paypal here 
+            // use stripe or paypal here to be implemented
 
             final prefs = await SharedPreferences.getInstance();
             String? userId = prefs.getString('userId');
