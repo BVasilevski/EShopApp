@@ -1,13 +1,12 @@
+import 'package:e_shop_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/form_button.dart';
 import '../widgets/input_field.dart';
 
 class RegisterScreen extends StatefulWidget {
-  /// Callback for when this form is submitted successfully. Parameters are (email, password)
-  final Function(String? email, String? password)? onSubmitted;
 
-  const RegisterScreen({this.onSubmitted, super.key});
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -17,8 +16,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late String firstAndLastName, email, password, confirmPassword;
   String? emailError, passwordError;
 
-  Function(String? email, String? password)? get onSubmitted =>
-      widget.onSubmitted;
 
   @override
   void initState() {
@@ -68,12 +65,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return isValid;
   }
+  registerUser(String email, String password, String firstAndLastName) async{
+    try {
+      final names = firstAndLastName.split(' ');
+      final response = await ApiService.create(email, password, names[0],names[1]);
 
+      if (response  == 200) {
+        Navigator.pushReplacementNamed(context, '/login'); 
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration failed. Accound already exists.')),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred. Please try again.')),
+      );
+    }
+  }
   void submit() {
     if (validate()) {
-      if (onSubmitted != null) {
-        onSubmitted!(email, password);
-      }
+      registerUser(email, password,firstAndLastName);
     }
   }
 

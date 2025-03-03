@@ -1,4 +1,6 @@
+import 'package:e_shop_app/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentWidget extends StatelessWidget {
   final double totalAmount;
@@ -72,8 +74,13 @@ class PaymentWidget extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             // The payment logic will be here
+            // use stripe or paypal here 
+
+            final prefs = await SharedPreferences.getInstance();
+            String? userId = prefs.getString('userId');
+            ApiService.createOrder(userId!);
             print('Processing payment of \$${totalAmount.toStringAsFixed(2)}');
           },
           style: ElevatedButton.styleFrom(

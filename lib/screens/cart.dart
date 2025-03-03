@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+import 'package:e_shop_app/models/item.dart';
+import 'package:e_shop_app/services/api_service.dart';
+import 'package:e_shop_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/navigation.dart';
 import '../widgets/payment.dart';
 
@@ -10,13 +16,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  // Placeholder data
-  final List<Map<String, dynamic>> cartItems = [
-    {'name': 'Item 1', 'price': 10.99},
-    {'name': 'Item 2', 'price': 15.49},
-    {'name': 'Item 3', 'price': 8.99},
-    {'name': 'Item 4', 'price': 12.00},
-  ];
+  List<Item> cartItems = [];
 
   int _selectedIndex = 1;
   bool _isPaymentWidgetVisible = false;
@@ -26,16 +26,40 @@ class _CartScreenState extends State<CartScreen> {
       _selectedIndex = index;
     });
   }
-
+  
+  void getItemsFromAPI(String userId) {
+    ApiService.getCartItems(userId).then((response) {
+      var data = json.decode(response.body);
+      if (data is List) {
+        setState(() {
+          cartItems = data.map<Item>((json) => Item.fromJson(json)).toList();
+        });
+      } else {
+        print("Unexpected API response format");
+      }
+    }).catchError((error) {
+      print("Error fetching items: $error");
+    });
+  }
   void _onCheckoutPressed() {
     setState(() {
       _isPaymentWidgetVisible = true;
     });
   }
-
+  Future<void> getCartItems() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userId');
+    getItemsFromAPI(userId!); 
+  }
+  @override
+  void initState() {
+    super.initState();
+    getCartItems();
+  }
   @override
   Widget build(BuildContext context) {
-    double totalPrice = cartItems.fold(0, (sum, item) => sum + item['price']);
+    double totalPrice = cartItems.fold(0, (sum, item) => sum + item.price);
+    AuthHelper.checkLoginStatus(context);
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: Stack(
@@ -94,7 +118,7 @@ class _CartScreenState extends State<CartScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item['name'],
+                                item.name,
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -102,7 +126,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                               ),
                               Text(
-                                '\$${item['price'].toStringAsFixed(2)}',
+                                '\$${item.price.toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.blueAccent,
@@ -113,6 +137,7 @@ class _CartScreenState extends State<CartScreen> {
                           IconButton(
                             onPressed: () {
                               // The delete from cart functionality will be here
+                              ApiService.removeItemFromCart(item.id);
                             },
                             icon: const Icon(
                               Icons.delete,

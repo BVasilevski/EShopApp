@@ -1,6 +1,9 @@
+import 'package:e_shop_app/models/user.dart';
 import 'package:e_shop_app/screens/edit_profile.dart';
+import 'package:e_shop_app/services/auth_service.dart';
 import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,18 +13,32 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final String firstAndLastName = "Test Testovski";
-  final String email = "test@gmail.com";
+  String firstAndLastName = "";
+  String email = "";
   int _selectedIndex = 2;
+  User? Curruser;
 
   void _onIndexChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
-
+  void setProfileInfo() async {
+    
+    final prefs = await SharedPreferences.getInstance();
+    
+    Curruser = User(id:prefs.getString('userId')!,firstName:prefs.getString('firstName')!,lastName:prefs.getString('lastName')!,email:prefs.getString('email')!);
+  
+    setState(() {
+      firstAndLastName = '${Curruser?.firstName} ${Curruser?.lastName}';
+      email = Curruser!.email;
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
+    AuthHelper.checkLoginStatus(context);
+    setProfileInfo();
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: Center(
@@ -93,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EditProfileScreen(),
+                        builder: (context) => EditProfileScreen(user: Curruser),
                       ),
                     );
                   },
@@ -108,8 +125,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () {
-                    // Log out logic goes here
+                  onPressed: () async {
+                     SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.remove('userId');
+                      await prefs.remove('firstName');
+                      await prefs.remove('lastName');
+                      await prefs.remove('email');
+                      Navigator.pushReplacementNamed(context, '/login');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
@@ -120,7 +142,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: const Text('Log Out'),
                 ),
-                const SizedBox(height: 300),
               ],
             ),
           ),

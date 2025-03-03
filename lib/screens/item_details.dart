@@ -1,3 +1,4 @@
+import 'package:e_shop_app/services/auth_service.dart';
 import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthHelper.checkLoginStatus(context);
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: SafeArea(
@@ -34,7 +36,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                     child: Image.network(
-                      widget.product['image'],
+                      widget.product['imageUrl'],
                       height: 250,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -52,7 +54,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.product['price'],
+                  widget.product['price'].toString(),
                   style: const TextStyle(
                     fontSize: 22,
                     color: Colors.green,
