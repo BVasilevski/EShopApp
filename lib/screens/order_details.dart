@@ -1,37 +1,24 @@
+import 'package:e_shop_app/models/order.dart';
+import 'package:e_shop_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../widgets/navigation.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
-  final int orderId;
+  final Order order;
 
-  const OrderDetailsScreen({super.key, required this.orderId});
+  const OrderDetailsScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
+    AuthHelper.checkLoginStatus(context);
     // Sample items for this order
-    final orderItems = [
-      {
-        'name': 'Intel Core i7 4970k',
-        'price': '\$300',
-        'category': 'CPU',
-        'image':
-            'https://cdn.mos.cms.futurecdn.net/2ec3b0c81bfb0efa1e92aa64011a1133.jpg'
-      },
-      {
-        'name': 'NVIDIA RTX 3070',
-        'price': '\$500',
-        'category': 'GPU',
-        'image': 'https://m.media-amazon.com/images/I/81761uwFaIL.jpg'
-      },
-    ];
 
-    final double totalPrice = orderItems.fold(0.0, (sum, item) {
-      return sum +
-          double.parse(item['price']!
-              .substring(1));
-    });
-    const String orderStatus = 'Delivered';
-    Color statusColor = orderStatus == 'Delivered' ? Colors.green : Colors.red;
+    final double totalPrice = order.totalPrice;
+    var orderStatus = 'traveling';
+    if(order.status){
+      orderStatus = 'deliverd';
+    }
+    Color statusColor = order.status == true ? Colors.green : Colors.red;
 
     return Scaffold(
       backgroundColor: Colors.blueAccent,
@@ -48,7 +35,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total: \n\$${totalPrice.toStringAsFixed(2)}',
+                        'Total: \n${totalPrice.toStringAsFixed(0)}ден.',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -62,9 +49,9 @@ class OrderDetailsScreen extends StatelessWidget {
                           color: statusColor,
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        child: const Text(
+                        child: Text(
                           orderStatus,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -77,9 +64,9 @@ class OrderDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: orderItems.length,
+                    itemCount: order.itemsInOrder.length,
                     itemBuilder: (context, index) {
-                      final item = orderItems[index];
+                      final item = order.itemsInOrder[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
@@ -91,7 +78,7 @@ class OrderDetailsScreen extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(
-                                  item['image']!,
+                                  item.imageUrl,
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
@@ -103,16 +90,7 @@ class OrderDetailsScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      item['category']!,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blueAccent,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      item['name']!,
+                                      item.name,
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -121,7 +99,7 @@ class OrderDetailsScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4), // Spacer
                                     Text(
-                                      item['price']!,
+                                      totalPrice.toStringAsFixed(0),
                                       style: const TextStyle(
                                         fontSize: 16,
                                         color: Colors.blueAccent,

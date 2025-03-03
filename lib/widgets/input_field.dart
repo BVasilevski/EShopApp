@@ -19,7 +19,6 @@ class InputField extends StatelessWidget {
     this.textInputAction,
     this.autoFocus = false,
     this.obscureText = false,
-    super.key,
   });
 
   @override

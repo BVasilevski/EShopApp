@@ -1,5 +1,12 @@
+import 'package:e_shop_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
+Future<void> _handleNavigation(BuildContext context, String destination) async {
+
+  AuthHelper.checkLoginStatus(context);
+  Navigator.pushNamed(context, destination);
+  
+}
 class NavigationWidget extends StatefulWidget {
   final Color backgroundColor;
   final int selectedIndex;
@@ -45,8 +52,8 @@ class _NavigationWidgetState extends State<NavigationWidget> {
               });
               widget.onIndexChanged(
                   _selectedIndex);
-              Navigator.pushNamed(
-                  context, '/items');
+              _handleNavigation(context, '/items');
+                  
             },
             isSelected: _selectedIndex == 0,
           ),
@@ -59,7 +66,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
                 _selectedIndex = 1;
               });
               widget.onIndexChanged(_selectedIndex);
-              Navigator.pushNamed(context, '/cart');
+              _handleNavigation(context, '/cart');
             },
             isSelected: _selectedIndex == 1,
           ),
@@ -72,8 +79,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
                 _selectedIndex = 2;
               });
               widget.onIndexChanged(_selectedIndex);
-              Navigator.pushNamed(
-                  context, '/profile');
+              _handleNavigation(context, '/profile');
             },
             isSelected: _selectedIndex == 2,
           ),

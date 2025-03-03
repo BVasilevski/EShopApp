@@ -1,15 +1,15 @@
+import 'package:e_shop_app/models/user.dart';
+import 'package:e_shop_app/services/api_service.dart';
 import 'package:e_shop_app/screens/register.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/form_button.dart';
 import '../widgets/input_field.dart';
-import '../widgets/navigation.dart';
 
 class LoginScreen extends StatefulWidget {
-  /// Callback for when this form is submitted successfully. Parameters are (email, password)
-  final Function(String? email, String? password)? onSubmitted;
 
-  const LoginScreen({this.onSubmitted, super.key});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -18,15 +18,11 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late String email, password;
   String? emailError, passwordError;
-  int _selectedIndex = 2;
-
-  Function(String? email, String? password)? get onSubmitted =>
-      widget.onSubmitted;
-
 
   @override
   void initState() {
     super.initState();
+    
     email = '';
     password = '';
 
@@ -64,32 +60,52 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return isValid;
   }
+  Future<void> loginUser(String email, String password) async {
+    var userId;
+    try {
+      userId = await ApiService.logIn(email, password);
+      print(userId);
+      
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred. Please try again.')),
+      );
+    }
+    if (userId != 'null') {
+        
+        User? Curruser = await ApiService.getUserInformation(userId);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString('userId', userId);
+        await prefs.setString('firstName', Curruser!.firstName);
+        await prefs.setString('lastName', Curruser!.lastName);
+        await prefs.setString('email', email);
+        Navigator.pushReplacementNamed(context, '/items'); 
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed. Wrong credentials.')),
+        );
+      }
+  }
 
   void submit() {
     if (validate()) {
-      if (onSubmitted != null) {
-        onSubmitted!(email, password);
-      }
+        loginUser(email, password);
     }
   }
 
-  void _onIndexChanged(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: ListView(
           children: [
-            SizedBox(height: screenHeight * .50),
+            SizedBox(height: screenHeight * .40),
             InputField(
               onChanged: (value) {
                 setState(() {
@@ -159,21 +175,14 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: submit,
             ),
             SizedBox(
-              height: screenHeight * .050,
+              height: screenHeight * .005,
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: double.infinity,
-                child: NavigationWidget(
-                  onIndexChanged: _onIndexChanged,
-                  selectedIndex: _selectedIndex,
-                ),
-              ),
-            ),
+            
           ],
         ),
       ),
     );
   }
 }
+
+

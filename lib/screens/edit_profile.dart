@@ -1,19 +1,21 @@
+import 'package:e_shop_app/models/user.dart';
+import 'package:e_shop_app/services/api_service.dart';
+import 'package:e_shop_app/services/auth_service.dart';
 import 'package:e_shop_app/widgets/input_field.dart';
 import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  final User? user;
+  const EditProfileScreen({super.key, this.user});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  // Placeholder user data
-  final String firstAndLastName = "Test Testovski";
-  final String email = "test@gmail.com";
-
+  late String email;
+  late String firtsAndLastName;
   int _selectedIndex = 2;
 
   void _onIndexChanged(int index) {
@@ -24,6 +26,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthHelper.checkLoginStatus(context);
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: Center(
@@ -54,8 +57,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const InputField(
+                InputField(
                   labelText: "Enter first and last name",
+                  onChanged: (value) {
+                    setState(() {
+                    firtsAndLastName = value;
+                    });
+                    },
                 ),
                 const SizedBox(height: 24),
                 const Text(
@@ -66,13 +74,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const InputField(
+                InputField(
+                  onChanged: (value) {
+                    setState(() {
+                    email = value;
+                    });
+                    },
                   labelText: "Enter email",
                 ),
                 const SizedBox(height: 48),
                 ElevatedButton(
-                  // Change data logic goes here
-                  onPressed: () {},
+                  onPressed: () async {
+                    bool succ = await ApiService.editUser(widget.user!.id.toString(),email, firtsAndLastName);
+                    if (succ){
+                      Navigator.pushReplacementNamed(context, '/profile'); 
+                    }else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Editing failed. Try again.')),
+                        );
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: const EdgeInsets.symmetric(
