@@ -79,6 +79,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                     final prefs = await SharedPreferences.getInstance();
                     String? userId = prefs.getString('userId');
                     ApiService.addItemFromCart(widget.product['id'], userId!);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Succesfuly added the item to cart.')),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
