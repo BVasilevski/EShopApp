@@ -18,7 +18,7 @@ class ItemsScreen extends StatefulWidget {
 class _ItemsScreenState extends State<ItemsScreen> {
   final List<String> categories = ['CPU', 'GPU', 'RAM' , 'PSU', 'STORAGE', 'MOTHERBOARD'];
   int _selectedIndex = 0;
-  List<Item> products = [];
+  List<Item> originalProducts= [];
   String selectedCategory = 'CPU';
   String searchQuery = '';
 
@@ -33,7 +33,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
       var data = json.decode(response.body);
       if (data is List) {
         setState(() {
-          products = data.map<Item>((json) => Item.fromJson(json)).toList();
+          originalProducts = data.map<Item>((json) => Item.fromJson(json)).toList();
         });
       } else {
         print("Unexpected API response format");
@@ -53,6 +53,10 @@ class _ItemsScreenState extends State<ItemsScreen> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     AuthHelper.checkLoginStatus(context);
+    List<Item> products = originalProducts
+        .where((product) =>
+            product.name.toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: Column(
@@ -204,7 +208,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                ' ${product.price.toStringAsFixed(0)}', 
+                                '${product.price.toStringAsFixed(0)}ден', 
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -213,11 +217,12 @@ class _ItemsScreenState extends State<ItemsScreen> {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  // Add to Cart functionality
                                   final prefs = await SharedPreferences.getInstance();
                                   String? userId = prefs.getString('userId');
                                   ApiService.addItemFromCart(product.id, userId!);
-
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Succesfuly added the item to cart.')),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.orange,

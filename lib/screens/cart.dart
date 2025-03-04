@@ -136,6 +136,9 @@ class _CartScreenState extends State<CartScreen> {
                                 setState(() {
                                   cartItems.removeAt(index);
                                 });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Succesfuly removed the item from cart.')),
+                                );
                               },
                               icon: const Icon(
                                 Icons.delete,

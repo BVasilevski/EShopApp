@@ -1,6 +1,8 @@
+import 'package:e_shop_app/services/api_service.dart';
 import 'package:e_shop_app/services/auth_service.dart';
 import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -73,13 +75,18 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 const SizedBox(height: 20),
 
                 ElevatedButton(
-                  onPressed: () {
-                    // Add to cart functionality
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    String? userId = prefs.getString('userId');
+                    ApiService.addItemFromCart(widget.product['id'], userId!);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Succesfuly added the item to cart.')),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         vertical: 14, horizontal: 50),
-                    backgroundColor: Colors.orange, // Button color
+                    backgroundColor: Colors.orange, 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
