@@ -15,7 +15,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late String email;
-  late String firtsAndLastName;
+  late String firstAndLastName;
   int _selectedIndex = 2;
 
   void _onIndexChanged(int index) {
@@ -61,7 +61,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   labelText: "Enter first and last name",
                   onChanged: (value) {
                     setState(() {
-                    firtsAndLastName = value;
+                     firstAndLastName = value;
                     });
                     },
                 ),
@@ -85,7 +85,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 const SizedBox(height: 48),
                 ElevatedButton(
                   onPressed: () async {
-                    bool succ = await ApiService.editUser(widget.user!.id.toString(),email, firtsAndLastName);
+                    bool succ = await ApiService.editUser(widget.user!.id.toString(),email, firstAndLastName);
                     if (succ){
                       Navigator.pushReplacementNamed(context, '/profile'); 
                     }else {

@@ -21,7 +21,7 @@ class ApiService {
   }
 
   static Future<void> createOrder(String userId) async {
-  
+
     final response = await http.post(
       Uri.parse("${baseUrl}orders/create"),
       body: {
@@ -29,18 +29,18 @@ class ApiService {
         },
     );
     print(response.statusCode);
-  
+
  }
 
   static Future<void> removeItemFromCart(int itemId) async {
-  
+
     final response = await http.delete(
       Uri.parse("${baseUrl}cart/remove_from_cart"),
       headers: {"Content-Type": "application/x-www-form-urlencoded"},
       body: {'itemId': itemId.toString()},
     );
     print(response.statusCode);
-  
+
  }
 
   static Future<void> addItemFromCart(int itemId, String userId) async {
@@ -55,19 +55,19 @@ class ApiService {
         },
     );
     print(response.statusCode);
-  
+
  }
 
  static Future<User> getUserInformation(String? userId) async {
   var response = await http.get(Uri.parse("${baseUrl}users"));
-  
+
   if (response.statusCode != 200) {
     throw Exception("Failed to fetch users: ${response.statusCode}");
   }
-  
+
   List<dynamic> users = jsonDecode(response.body);
   var user = users.firstWhere(
-    (user) => user['id'].toString() == userId,  
+    (user) => user['id'].toString() == userId,
   );
   print(User.fromJson(user));
 
@@ -91,7 +91,7 @@ class ApiService {
       return userId;
     }
     return 'null';
-    
+
   }
 
   static Future<int> create(String email, String password, String firstName, String lastName) async {
@@ -129,5 +129,15 @@ class ApiService {
     }
   }
 
+  static Future<bool> addRatingForItem(int itemId, String userId, int rating, String comment) async {
+    var url = Uri.parse("${baseUrl}items/rate/$itemId?userId=$userId&rating=$rating&comment=$comment&userImageUrl=");
+    final response = await http.post(url);
+    return response.statusCode == 200 ? true : false;
+  }
 
+  static Future<bool> cancelOrder(int orderId, String userId) async {
+    var url = Uri.parse("${baseUrl}orders/cancel/$orderId?userId=$userId");
+    final response = await http.delete(url);
+    return response.statusCode == 200 ? true : false;
+  }
 }

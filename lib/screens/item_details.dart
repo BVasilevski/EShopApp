@@ -4,6 +4,8 @@ import 'package:e_shop_app/widgets/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'add_review.dart';
+
 class ItemDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> product;
 
@@ -15,6 +17,7 @@ class ItemDetailsScreen extends StatefulWidget {
 
 class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   int _selectedIndex = 0;
+
   void _onIndexChanged(int index) {
     setState(() {
       _selectedIndex = index;
@@ -28,7 +31,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       backgroundColor: Colors.blueAccent,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(top: 50.0),
+          padding: const EdgeInsets.only(top: 50.0, left: 20.0, right: 20.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -36,12 +39,29 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                    child: Image.network(
-                      widget.product['imageUrl'],
-                      height: 250,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(12.0),
+                        color: Colors.black.withOpacity(0.6),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Image.network(
+                          widget.product['imageUrl'],
+                          height: 500,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -56,7 +76,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.product['price'].toString(),
+                  "${widget.product['price'].toString()}ден",
                   style: const TextStyle(
                     fontSize: 22,
                     color: Colors.green,
@@ -67,35 +87,69 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'Description: ${widget.product['specifications'] ?? 'No specifications available'}',
+                    'Description: ${widget.product['description'] ?? 'No description available'}',
                     style: const TextStyle(fontSize: 16, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                ElevatedButton(
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    String? userId = prefs.getString('userId');
-                    ApiService.addItemFromCart(widget.product['id'], userId!);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Succesfuly added the item to cart.')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 50),
-                    backgroundColor: Colors.orange, 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        String? userId = prefs.getString('userId');
+                        ApiService.addItemFromCart(
+                            widget.product['id'], userId!);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('Successfully added the item to cart.'),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 14, horizontal: 40),
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        elevation: 5,
+                      ),
+                      child: const Text('Add to Cart'),
                     ),
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddReviewScreen(itemId: widget.product['id']),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 14, horizontal: 40),
+                        backgroundColor: Colors.amberAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        elevation: 5,
+                      ),
+                      child: const Text('Add Review'),
                     ),
-                  ),
-                  child: const Text('Add to Cart'),
+                  ],
                 ),
                 const SizedBox(height: 20),
               ],

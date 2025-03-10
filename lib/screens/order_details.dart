@@ -1,6 +1,8 @@
 import 'package:e_shop_app/models/order.dart';
 import 'package:e_shop_app/services/auth_service.dart';
+import 'package:e_shop_app/services/api_service.dart'; // Add API service for cancelation
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/navigation.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -8,16 +10,27 @@ class OrderDetailsScreen extends StatelessWidget {
 
   const OrderDetailsScreen({super.key, required this.order});
 
+  void _cancelOrder(BuildContext context, int orderId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userId');
+    final success = await ApiService.cancelOrder(orderId, userId!);
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Order has been canceled successfully.')),
+      );
+      Navigator.pushNamed(context, "/orders");
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to cancel the order.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthHelper.checkLoginStatus(context);
-    // Sample items for this order
-
     final double totalPrice = order.totalPrice;
-    var orderStatus = 'traveling';
-    if(order.status){
-      orderStatus = 'deliverd';
-    }
+    var orderStatus = order.status ? "Delivered" : "Not Delivered";
     Color statusColor = order.status == true ? Colors.green : Colors.red;
 
     return Scaffold(
@@ -35,7 +48,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total: \n${totalPrice.toStringAsFixed(0)}ден.',
+                        'Total: \n${totalPrice.toStringAsFixed(0)} ден.',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -62,6 +75,27 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
+                if (!order.status)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () => _cancelOrder(context, order.id),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 14, horizontal: 40),
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        elevation: 5,
+                      ),
+                      child: const Text('Cancel Order'),
+                    ),
+                  ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: order.itemsInOrder.length,
@@ -99,7 +133,7 @@ class OrderDetailsScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4), // Spacer
                                     Text(
-                                      totalPrice.toStringAsFixed(0),
+                                      "${item.price.toStringAsFixed(0)}ден",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         color: Colors.blueAccent,

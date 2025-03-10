@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:e_shop_app/models/cartItem.dart';
+import 'package:e_shop_app/models/cart_item.dart';
 import 'package:e_shop_app/services/api_service.dart';
 import 'package:e_shop_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ class _CartScreenState extends State<CartScreen> {
   }
   @override
   Widget build(BuildContext context) {
-  double totalPrice = cartItems.fold(0, (sum, item) => sum + item.price);
+  double totalPrice = cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
   AuthHelper.checkLoginStatus(context);
 
   return Scaffold(

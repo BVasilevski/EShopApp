@@ -1,6 +1,7 @@
 import 'package:e_shop_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_stripe/flutter_stripe.dart'; // Import Stripe package
 
 class PaymentWidget extends StatelessWidget {
   final double totalAmount;
@@ -75,13 +76,50 @@ class PaymentWidget extends StatelessWidget {
         const SizedBox(height: 24),
         ElevatedButton(
           onPressed: () async {
-            // The payment logic will be here
-            // use stripe or paypal here to be implemented
+            try {
+              // Extract expiration month and year from input
+              final expiration = expirationController.text.split('/');
+              final expirationMonth = int.parse(expiration[0]);
+              final expirationYear = int.parse('20${expiration[1]}');
 
-            final prefs = await SharedPreferences.getInstance();
-            String? userId = prefs.getString('userId');
-            ApiService.createOrder(userId!);
-            print('Processing payment of \$${totalAmount.toStringAsFixed(2)}');
+              // Initialize Stripe with your test publishable key
+              Stripe.publishableKey =
+                  'pk_test_51QYBdNRr839MP2GDWFvQIFO6lZ0uCiBMUv3FcYCBBpJEJ2CIi8uDZJdomf8kOi3QtCO8CXExwJw3yIATROkMzaJd00JokdhuLf'; // Replace with your actual key
+              Stripe.merchantIdentifier =
+                  'test'; // Optional, for Apple Pay and Google Pay
+
+              // Create PaymentMethodData
+              final paymentMethodData = PaymentMethodData(
+                billingDetails: BillingDetails(
+                  name: "Customer", // You can replace this with the user's name
+                ),
+              );
+
+              // Create the payment method
+              final paymentMethod = await Stripe.instance.createPaymentMethod(
+                params: PaymentMethodParams.card(
+                    paymentMethodData: paymentMethodData),
+              );
+
+              // Simulate the payment
+              print('Payment method created: ${paymentMethod.id}');
+              print(
+                  'Simulating successful payment of \$${totalAmount.toStringAsFixed(2)}');
+
+              // Process the payment and create the order on the server
+              final prefs = await SharedPreferences.getInstance();
+              String? userId = prefs.getString('userId');
+              ApiService.createOrder(userId!);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Payment Successful!')),
+              );
+            } catch (e) {
+              print('Payment failed: $e');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Payment Failed: $e')),
+              );
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.indigo,
@@ -93,7 +131,7 @@ class PaymentWidget extends StatelessWidget {
           ),
           child: Text(
             'Pay \$${totalAmount.toStringAsFixed(2)}',
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ),
       ],

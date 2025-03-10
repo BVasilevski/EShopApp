@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'package:e_shop_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 
+import '../services/location_service.dart';
 import '../widgets/navigation.dart';
 
 class MapScreen extends StatefulWidget {
@@ -14,6 +18,10 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   int _selectedIndex = 0;
+  LatLng? _userLocation;
+  List<LatLng> _routePoints = [];
+  final LatLng _destination =
+  const LatLng(42.00415082962822, 21.409493539235406);
 
   void _onIndexChanged(int index) {
     setState(() {
@@ -32,12 +40,41 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  void _onGoButtonPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Route directions logic goes here'),
-      ),
-    );
+  Future<void> _getUserLocation() async {
+    try {
+      LatLng? location = await LocationService.getUserLocation();
+      if (location != null) {
+        setState(() {
+          _userLocation = location;
+        });
+
+        _fetchRoute();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
+  Future<void> _fetchRoute() async {
+    if (_userLocation == null) return;
+
+    try {
+      List<LatLng> route =
+      await LocationService.fetchRoute(_userLocation!, _destination);
+      setState(() {
+        _routePoints = route;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Route fetched successfully!")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 
   @override
@@ -56,9 +93,10 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 TileLayer(
                   urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: const ['a', 'b', 'c'],
                 ),
+                // Keep original marker
                 const MarkerLayer(
                   markers: [
                     Marker(
@@ -71,6 +109,30 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ],
                 ),
+                if (_userLocation != null)
+                  MarkerLayer(
+                    markers: [
+                      // User location marker
+                      Marker(
+                        point: _userLocation!,
+                        child: const Icon(
+                          Icons.person_pin_circle,
+                          color: Colors.blue,
+                          size: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+                if (_routePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: _routePoints,
+                        color: Colors.blue,
+                        strokeWidth: 5.0,
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -79,10 +141,11 @@ class _MapScreenState extends State<MapScreen> {
             child: FractionallySizedBox(
               widthFactor: 0.7,
               child: ElevatedButton(
-                onPressed: _onGoButtonPressed,
+                onPressed: _getUserLocation,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

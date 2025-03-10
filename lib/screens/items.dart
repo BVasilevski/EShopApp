@@ -46,7 +46,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
   @override
   void initState() {
     super.initState();
-    getItemsFromAPI(selectedCategory); 
+    getItemsFromAPI(selectedCategory);
   }
 
   @override
@@ -202,13 +202,14 @@ class _ItemsScreenState extends State<ItemsScreen> {
                           ),
                         ),
                         const Spacer(),
+                        const Divider(),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '${product.price.toStringAsFixed(0)}ден', 
+                                '${product.price.toStringAsFixed(0)}ден',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
