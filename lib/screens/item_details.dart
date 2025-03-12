@@ -142,7 +142,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             }
           },
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             backgroundColor: Colors.orange,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0)),
@@ -151,7 +151,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
           ),
           child: const Text('Add to Cart'),
         ),
-        const SizedBox(width: 20),
+        const SizedBox(width: 10),
         ElevatedButton(
           onPressed: () {
             Navigator.push(
@@ -161,7 +161,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             );
           },
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             backgroundColor: Colors.amberAccent,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0)),
