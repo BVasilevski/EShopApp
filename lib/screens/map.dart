@@ -40,7 +40,24 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<bool> _checkLocationPermission() async {
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      final requestedPermission = await Geolocator.requestPermission();
+      return requestedPermission != LocationPermission.denied &&
+          requestedPermission != LocationPermission.deniedForever;
+    }
+    return permission != LocationPermission.deniedForever;
+  }
+  
   Future<void> _getUserLocation() async {
+    final hasPermission = await _checkLocationPermission();
+    if (!hasPermission) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Location permission denied.")),
+      );
+      return;
+    }
     try {
       LatLng? location = await LocationService.getUserLocation();
       if (location != null) {
