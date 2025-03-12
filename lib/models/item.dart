@@ -1,10 +1,12 @@
+import 'package:e_shop_app/models/item_rating.dart';
+
 class Item {
   final int id;
   final String name;
   final double price;
   final String imageUrl;
   final String? description;
-  final String? itemRatings;
+  final List<ItemRating>? itemRatings;
 
   Item({required this.id, required this.name, required this.price, required this.imageUrl, required this.description, required this.itemRatings});
 
@@ -15,7 +17,7 @@ class Item {
       price: json['price'].toDouble(),
       imageUrl: json['imageUrl'],
       description: json['description'],
-      itemRatings: json['itemRatings']
+      itemRatings: (json['itemRatings'] as List?)?.map((rating) => ItemRating.fromJson(rating)).toList() ?? [],
     );
   }
 

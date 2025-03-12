@@ -160,7 +160,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ItemDetailsScreen(product: product.toJson()),
+                        builder: (context) => ItemDetailsScreen(itemId: product.id),
                       ),
                     );
                   },

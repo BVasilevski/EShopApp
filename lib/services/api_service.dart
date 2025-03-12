@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:e_shop_app/models/user.dart';
 import 'package:http/http.dart' as http;
+
+import '../models/item.dart';
 var baseUrl = 'https://onlineshop-production-43c7.up.railway.app/api/';
 
 class ApiService {
@@ -19,6 +21,24 @@ class ApiService {
     var response = await http.get(Uri.parse("${baseUrl}orders?userId=$userId"));
     return response;
   }
+
+  static Future<Item?> getDetailsForItem(int itemId) async {
+    try {
+      var response = await http.get(Uri.parse("${baseUrl}items/$itemId"));
+      if (response.statusCode == 200) {
+        print("Response: ${response.body}");
+        Map<String, dynamic> data = json.decode(response.body);
+        return Item.fromJson(data);
+      } else {
+        print("Failed to fetch item. Status: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching item: $e");
+      return null;
+    }
+  }
+
 
   static Future<void> createOrder(String userId) async {
 
