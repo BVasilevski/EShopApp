@@ -1,8 +1,9 @@
 import 'package:e_shop_app/models/order.dart';
 import 'package:e_shop_app/services/auth_service.dart';
-import 'package:e_shop_app/services/api_service.dart'; // Add API service for cancelation
+import 'package:e_shop_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/item.dart';
 import '../widgets/navigation.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -32,6 +33,14 @@ class OrderDetailsScreen extends StatelessWidget {
     final double totalPrice = order.totalPrice;
     var orderStatus = order.status ? "Delivered" : "Not Delivered";
     Color statusColor = order.status == true ? Colors.green : Colors.red;
+
+    final groupedItems = <int, List<Item>>{};
+    for (var item in order.itemsInOrder) {
+      if (!groupedItems.containsKey(item.id)) {
+        groupedItems[item.id] = [];
+      }
+      groupedItems[item.id]!.add(item);
+    }
 
     return Scaffold(
       backgroundColor: Colors.blueAccent,
@@ -98,48 +107,64 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: order.itemsInOrder.length,
+                    itemCount: groupedItems.length,
                     itemBuilder: (context, index) {
-                      final item = order.itemsInOrder[index];
+                      final itemGroup = groupedItems.values.elementAt(index);
+                      final item = itemGroup.first;
+
                       return Card(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
                         elevation: 4,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Image.network(
-                                  item.imageUrl,
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                ),
+                              Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(
+                                      item.imageUrl,
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blueAccent,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "${item.price.toStringAsFixed(0)} ден",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.blueAccent,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blueAccent,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4), // Spacer
-                                    Text(
-                                      "${item.price.toStringAsFixed(0)}ден",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.blueAccent,
-                                      ),
-                                    ),
-                                  ],
+                              const SizedBox(height: 8),
+                              Text(
+                                "Quantity: ${itemGroup.length}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueAccent,
                                 ),
                               ),
                             ],

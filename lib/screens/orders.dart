@@ -90,7 +90,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Order #${order.id}',
+                                'Order #${index + 1}',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

@@ -74,7 +74,7 @@ class _CartScreenState extends State<CartScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '  Total:\n ${totalPrice.toStringAsFixed(0)}ден.',
+                    ' Total:\n ${totalPrice.toStringAsFixed(0)}ден.',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

@@ -149,8 +149,8 @@ class ApiService {
     }
   }
 
-  static Future<bool> addRatingForItem(int itemId, String userId, int rating, String comment) async {
-    var url = Uri.parse("${baseUrl}items/rate/$itemId?userId=$userId&rating=$rating&comment=$comment&userImageUrl=");
+  static Future<bool> addRatingForItem(int itemId, String userId, int rating, String comment, String imageUrl) async {
+    var url = Uri.parse("${baseUrl}items/rate/$itemId?userId=$userId&rating=$rating&comment=$comment&userImageUrl=$imageUrl");
     final response = await http.post(url);
     return response.statusCode == 200 ? true : false;
   }

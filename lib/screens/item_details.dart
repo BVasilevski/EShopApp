@@ -93,7 +93,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
           imageUrl,
           height: 400,
           width: double.infinity,
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:e_shop_app/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_stripe/flutter_stripe.dart'; // Import Stripe package
 
 class PaymentWidget extends StatelessWidget {
   final double totalAmount;
@@ -36,6 +36,23 @@ class PaymentWidget extends StatelessWidget {
           child: TextField(
             controller: cardController,
             keyboardType: TextInputType.number,
+            maxLength: 19,
+            inputFormatters: [
+              TextInputFormatter.withFunction((oldValue, newValue) {
+                final newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+                String formattedText = '';
+                for (int i = 0; i < newText.length; i++) {
+                  if (i > 0 && i % 4 == 0) {
+                    formattedText += '-';
+                  }
+                  formattedText += newText[i];
+                }
+                return newValue.copyWith(
+                  text: formattedText,
+                  selection: TextSelection.collapsed(offset: formattedText.length),
+                );
+              }),
+            ],
             decoration: const InputDecoration(
               labelText: 'Card Number',
               border: OutlineInputBorder(),
@@ -53,6 +70,23 @@ class PaymentWidget extends StatelessWidget {
                 child: TextField(
                   controller: expirationController,
                   keyboardType: TextInputType.datetime,
+                  maxLength: 5,
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+                      String formattedText = '';
+                      for (int i = 0; i < newText.length; i++) {
+                        if (i == 2) {
+                          formattedText += '/';
+                        }
+                        formattedText += newText[i];
+                      }
+                      return newValue.copyWith(
+                        text: formattedText,
+                        selection: TextSelection.collapsed(offset: formattedText.length),
+                      );
+                    }),
+                  ],
                   decoration: const InputDecoration(
                     labelText: 'MM/YY',
                     border: OutlineInputBorder(),
@@ -64,6 +98,7 @@ class PaymentWidget extends StatelessWidget {
                 child: TextField(
                   controller: cvcController,
                   keyboardType: TextInputType.number,
+                  maxLength: 3,
                   decoration: const InputDecoration(
                     labelText: 'CVC',
                     border: OutlineInputBorder(),
@@ -77,36 +112,18 @@ class PaymentWidget extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             try {
-              // Extract expiration month and year from input
+              final cardNumber = cardController.text.replaceAll(RegExp(r'[^0-9]'), '');
               final expiration = expirationController.text.split('/');
               final expirationMonth = int.parse(expiration[0]);
               final expirationYear = int.parse('20${expiration[1]}');
+              final cvc = cvcController.text;
 
-              // Initialize Stripe with your test publishable key
-              Stripe.publishableKey =
-                  'pk_test_51QYBdNRr839MP2GDWFvQIFO6lZ0uCiBMUv3FcYCBBpJEJ2CIi8uDZJdomf8kOi3QtCO8CXExwJw3yIATROkMzaJd00JokdhuLf'; // Replace with your actual key
-              Stripe.merchantIdentifier =
-                  'test'; // Optional, for Apple Pay and Google Pay
+              print('Processing payment...');
+              print('Card Number: $cardNumber');
+              print('Expiration Date: $expirationMonth/$expirationYear');
+              print('CVC: $cvc');
+              print('Simulating payment of \$${totalAmount.toStringAsFixed(2)}');
 
-              // Create PaymentMethodData
-              final paymentMethodData = PaymentMethodData(
-                billingDetails: BillingDetails(
-                  name: "Customer", // You can replace this with the user's name
-                ),
-              );
-
-              // Create the payment method
-              final paymentMethod = await Stripe.instance.createPaymentMethod(
-                params: PaymentMethodParams.card(
-                    paymentMethodData: paymentMethodData),
-              );
-
-              // Simulate the payment
-              print('Payment method created: ${paymentMethod.id}');
-              print(
-                  'Simulating successful payment of \$${totalAmount.toStringAsFixed(2)}');
-
-              // Process the payment and create the order on the server
               final prefs = await SharedPreferences.getInstance();
               String? userId = prefs.getString('userId');
               ApiService.createOrder(userId!);
@@ -114,6 +131,7 @@ class PaymentWidget extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Payment Successful!')),
               );
+              Navigator.pushNamed(context, '/items');
             } catch (e) {
               print('Payment failed: $e');
               ScaffoldMessenger.of(context).showSnackBar(
@@ -130,7 +148,7 @@ class PaymentWidget extends StatelessWidget {
             ),
           ),
           child: Text(
-            'Pay \$${totalAmount.toStringAsFixed(2)}',
+            'Pay ${totalAmount.toStringAsFixed(2)}ден',
             style: const TextStyle(color: Colors.white),
           ),
         ),
