@@ -1,16 +1,17 @@
 # e_shop_app
 
-A new Flutter project.
+Flutter проект за предметот Мобилни информациски системи.
 
-## Getting Started
+Тема: ЕShop Application
 
-This project is a starting point for a Flutter application.
+## Автори
 
-A few resources to get you started if this is your first Flutter project:
+Дарко Диванисов - 201023
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Бојан Василевски - 211165
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Ментори
+
+проф. др. Петре Ламески
+
+асс. Мила Додевска
